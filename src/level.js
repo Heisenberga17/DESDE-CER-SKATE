@@ -114,14 +114,14 @@ function placeBox(scene, x, y, z, w, h, d, mat) {
 export function buildLevel(scene) {
   // === Ground ===
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(100, 100),
+    new THREE.PlaneGeometry(200, 200),
     new THREE.MeshStandardMaterial({ color: COLORS.ground, roughness: 0.9, metalness: 0.05 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  const grid = new THREE.GridHelper(100, 50, COLORS.gridLine, COLORS.gridLine);
+  const grid = new THREE.GridHelper(200, 100, COLORS.gridLine, COLORS.gridLine);
   grid.position.y = 0.005;
   grid.material.transparent = true;
   grid.material.opacity = 0.15;
@@ -202,6 +202,94 @@ export function buildLevel(scene) {
   // East funbox
   placeRamp(scene, 10, -6, 2, 0.4, 1, 0, matRamp);
   placeRamp(scene, 10, -4, 2, 0.4, 1, Math.PI, matRamp);
+
+  // ==========================================
+  // NEW RAILS (spread across the park)
+  // ==========================================
+
+  placeRail(scene, 15, -2, 20, -2, 0.35);     // long flat rail, northeast
+  placeRail(scene, 15, 2, 20, 2, 0.35);       // parallel (double rail set)
+  placeRail(scene, -15, 5, -15, 12, 0.35);    // long rail, northwest
+  placeRail(scene, -20, -5, -16, -5, 0.35);   // short rail, west
+  placeRail(scene, 12, -10, 18, -7, 0.4);     // diagonal downhill feel
+  placeRail(scene, 0, -12, 6, -12, 0.35);     // south center rail
+  placeRail(scene, -10, 10, -4, 10, 0.35);    // north-west rail
+  placeRail(scene, 20, 8, 20, 14, 0.5);       // far east vertical rail
+  placeRail(scene, -18, -12, -12, -12, 0.35); // southwest rail
+  placeRail(scene, 8, 12, 14, 12, 0.35);      // northeast rail
+
+  // ==========================================
+  // PLAZA AREA (northeast, x:15-25, z:5-15)
+  // ==========================================
+
+  // Low manual pads
+  placeBox(scene, 18, 0.1, 8, 3, 0.2, 1.5, matLedge);
+  placeBox(scene, 22, 0.1, 8, 3, 0.2, 1.5, matLedge);
+
+  // Ledge with rail on top
+  placeBox(scene, 20, 0.2, 12, 5, 0.4, 1, matLedge);
+  placeRail(scene, 17.5, 12, 22.5, 12, 0.45);
+
+  // Pyramid: 4 ramps facing outward + flat top box
+  placeRamp(scene, 20, 5.5, 3, 0.6, 1.5, 0, matRamp);           // south face
+  placeRamp(scene, 20, 9, 3, 0.6, 1.5, Math.PI, matRamp);       // north face
+  placeRamp(scene, 18.25, 7.25, 3, 0.6, 1.5, -Math.PI / 2, matRamp); // west face
+  placeRamp(scene, 21.75, 7.25, 3, 0.6, 1.5, Math.PI / 2, matRamp);  // east face
+  placeBox(scene, 20, 0.55, 7.25, 2.0, 0.1, 2.0, matRamp);     // flat top
+
+  // ==========================================
+  // STREET SECTION (northwest, x:-15 to -25, z:5-15)
+  // ==========================================
+
+  // 5-step stair set with handrails on both sides
+  for (let i = 0; i < 5; i++) {
+    placeBox(scene, -20, (i + 1) * 0.15 / 2, 10 - i * 0.4, 4, (i + 1) * 0.15, 0.4, matLedge);
+  }
+  placeRail(scene, -22.2, 10, -22.2, 8.0, 0.8);  // left handrail
+  placeRail(scene, -17.8, 10, -17.8, 8.0, 0.8);  // right handrail
+
+  // Flat gap: two platforms separated by a space to ollie over
+  placeBox(scene, -22, 0.15, 13, 3, 0.3, 2, matLedge);
+  placeBox(scene, -17, 0.15, 13, 3, 0.3, 2, matLedge);
+
+  // Low ledge line
+  placeBox(scene, -20, 0.2, 6, 8, 0.4, 0.8, matLedge);
+
+  // ==========================================
+  // BOWL CORNER (southeast, x:15-25, z:-10 to -20)
+  // ==========================================
+
+  // 4 quarter pipes facing inward
+  placeRamp(scene, 18, -12, 5, 1.5, 2.0, Math.PI, matRampDark);   // south side, face north
+  placeRamp(scene, 18, -18, 5, 1.5, 2.0, 0, matRampDark);         // north side, face south
+  placeRamp(scene, 15, -15, 5, 1.5, 2.0, Math.PI / 2, matRampDark);  // west side, face east
+  placeRamp(scene, 21, -15, 5, 1.5, 2.0, -Math.PI / 2, matRampDark); // east side, face west
+
+  // Flat bottom box connecting them
+  placeBox(scene, 18, 0.05, -15, 4, 0.1, 4, matRamp);
+
+  // ==========================================
+  // SOUTH EXTENSION (z:-20 to -30)
+  // ==========================================
+
+  // Bank ramps along the south edge
+  placeRamp(scene, -5, -25, 4, 1.0, 2.0, 0, matRamp);
+  placeRamp(scene, 5, -25, 4, 1.0, 2.0, 0, matRamp);
+  placeRamp(scene, 0, -28, 6, 1.2, 2.0, 0, matRampDark);
+
+  // A couple more kickers
+  placeRamp(scene, -8, -22, 2.5, 0.5, 1.2, Math.PI, matRamp);
+  placeRamp(scene, 8, -22, 2.5, 0.5, 1.2, Math.PI, matRamp);
+
+  // Rail line
+  placeRail(scene, -4, -22, 4, -22, 0.35);
+
+  // ==========================================
+  // EXTRA KICKERS near halfpipe area
+  // ==========================================
+
+  placeRamp(scene, -14, -4, 2, 0.5, 1.2, 0, matRamp);
+  placeRamp(scene, -14, 4, 2, 0.5, 1.2, Math.PI, matRamp);
 
   // ==========================================
   // CLOUDS
