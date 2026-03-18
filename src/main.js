@@ -28,8 +28,8 @@ async function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(COLORS.skyTop);
 
-  // Fog
-  scene.fog = new THREE.FogExp2(COLORS.fog, 0.018);
+  // Fog (less dense for larger level)
+  scene.fog = new THREE.FogExp2(COLORS.fog, 0.004);
 
   // === Sky Gradient ===
   createSky();
@@ -40,8 +40,8 @@ async function init() {
   // === Lighting ===
   setupLighting();
 
-  // === Level ===
-  buildLevel(scene);
+  // === Level (async — loads GLB) ===
+  await buildLevel(scene);
 
   // === Player ===
   await createPlayer(scene);
@@ -64,7 +64,7 @@ async function init() {
 }
 
 function createSky() {
-  const skyGeo = new THREE.SphereGeometry(90, 32, 15);
+  const skyGeo = new THREE.SphereGeometry(300, 32, 15);
   const skyMat = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     uniforms: {
@@ -113,7 +113,7 @@ function createSky() {
     depthWrite: false,
   });
   const glow = new THREE.Mesh(glowGeo, glowMat);
-  glow.position.set(0, 5, -80);
+  glow.position.set(0, 5, -250);
   scene.add(glow);
 }
 
@@ -129,11 +129,11 @@ function setupLighting() {
   dirLight.shadow.mapSize.width = LIGHTING.shadowMapSize;
   dirLight.shadow.mapSize.height = LIGHTING.shadowMapSize;
   dirLight.shadow.camera.near = 0.5;
-  dirLight.shadow.camera.far = 60;
-  dirLight.shadow.camera.left = -25;
-  dirLight.shadow.camera.right = 25;
-  dirLight.shadow.camera.top = 25;
-  dirLight.shadow.camera.bottom = -25;
+  dirLight.shadow.camera.far = 300;
+  dirLight.shadow.camera.left = -100;
+  dirLight.shadow.camera.right = 100;
+  dirLight.shadow.camera.top = 100;
+  dirLight.shadow.camera.bottom = -100;
   dirLight.shadow.bias = -0.001;
   scene.add(dirLight);
 

@@ -59,7 +59,7 @@ export const CAMERA = {
   speedZoomOut: 0.04,
   fov: 65,
   near: 0.1,
-  far: 200,
+  far: 500,
 };
 
 // Tricks

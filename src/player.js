@@ -41,8 +41,8 @@ let grindRail = null;
 let grindProgress = 0;
 let grindDirection = 1;
 
-const SPAWN = new THREE.Vector3(0, 0, 12);
-const SPAWN_HEADING = 0;
+const SPAWN = new THREE.Vector3(0, 0, 0);
+const SPAWN_HEADING = Math.PI;
 
 // Temp vectors to avoid per-frame allocation
 const _playerMin = new THREE.Vector3();
