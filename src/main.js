@@ -3,16 +3,18 @@
 import * as THREE from 'three';
 import { EffectComposer, RenderPass, BloomEffect, EffectPass, SMAAEffect } from 'postprocessing';
 import { COLORS, LIGHTING, POST, CAMERA as CAM_CONFIG } from './config.js';
-import { initInput } from './input.js';
+import { initInput, pollCameraToggle } from './input.js';
 // import { initAudio } from './audio.js';
-import { createCamera, updateCamera, onResize } from './camera.js';
+import { createCamera, updateCamera, onResize, toggleCameraMode, getCamera } from './camera.js';
+import { createHUD } from './hud.js';
 import { buildLevel } from './level.js';
 import { createPlayer, updatePlayer, getPlayerState } from './player.js';
+import { showCharacterSelect } from './characterSelect.js';
 
 let renderer, scene, camera, composer;
 let clock;
 
-async function init() {
+async function init(character) {
   // === Renderer ===
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -37,6 +39,9 @@ async function init() {
   // === Camera ===
   camera = createCamera();
 
+  // === Debug HUD ===
+  createHUD();
+
   // === Lighting ===
   setupLighting();
 
@@ -44,7 +49,7 @@ async function init() {
   buildLevel(scene);
 
   // === Player ===
-  await createPlayer(scene);
+  await createPlayer(scene, character.modelPath, character.texturePath);
 
   // === Post-Processing ===
   setupPostProcessing();
@@ -186,6 +191,9 @@ function animate(timestamp) {
   // Update game systems
   updatePlayer(dt);
 
+  // Camera toggle (C key / PS5 Share)
+  if (pollCameraToggle()) toggleCameraMode();
+
   // Update camera
   const state = getPlayerState();
   updateCamera(state.position, state.heading, state.speed, state.isAirborne, dt);
@@ -195,4 +203,8 @@ function animate(timestamp) {
 }
 
 // === GO ===
-init().catch(console.error);
+async function start() {
+  const character = await showCharacterSelect();
+  await init(character);
+}
+start().catch(console.error);

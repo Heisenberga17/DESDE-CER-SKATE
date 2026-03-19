@@ -7,6 +7,11 @@ let camera;
 let currentPos = new THREE.Vector3();
 let currentLookAt = new THREE.Vector3();
 let initialized = false;
+let cameraMode = 'behind'; // 'behind' | 'side'
+
+export function toggleCameraMode() {
+  cameraMode = cameraMode === 'behind' ? 'side' : 'behind';
+}
 
 export function createCamera() {
   camera = new THREE.PerspectiveCamera(
@@ -38,32 +43,54 @@ export function updateCamera(playerPos, playerHeading, speed, isAirborne, dt) {
     return;
   }
 
-  // Speed-based zoom out
-  const speedZoom = speed * CAMERA.speedZoomOut;
-  const dist = CAMERA.distance + speedZoom;
+  const lerpFactor = 1 - Math.exp(-CAMERA.lerpSpeed * dt);
 
-  const height = CAMERA.height;
+  let targetPos, lookTarget;
 
-  // Target position: behind and above player
-  const targetPos = new THREE.Vector3(
-    playerPos.x - Math.sin(playerHeading) * dist,
-    playerPos.y + height,
-    playerPos.z - Math.cos(playerHeading) * dist
-  );
+  if (cameraMode === 'side') {
+    // Side-face camera: positioned to the right of the player, looking at their head
+    const rightX = Math.cos(playerHeading);
+    const rightZ = -Math.sin(playerHeading);
+    const fwdX = Math.sin(playerHeading);
+    const fwdZ = Math.cos(playerHeading);
+
+    targetPos = new THREE.Vector3(
+      playerPos.x + rightX * CAMERA.sideRight + fwdX * CAMERA.sideFwd,
+      playerPos.y + CAMERA.sideHeight,
+      playerPos.z + rightZ * CAMERA.sideRight + fwdZ * CAMERA.sideFwd
+    );
+    lookTarget = new THREE.Vector3(
+      playerPos.x,
+      playerPos.y + CAMERA.sideLookHeight,
+      playerPos.z
+    );
+  } else {
+    // Default behind camera
+    const speedZoom = speed * CAMERA.speedZoomOut;
+    const dist = CAMERA.distance + speedZoom;
+
+    targetPos = new THREE.Vector3(
+      playerPos.x - Math.sin(playerHeading) * dist,
+      playerPos.y + CAMERA.height,
+      playerPos.z - Math.cos(playerHeading) * dist
+    );
+    lookTarget = new THREE.Vector3(
+      playerPos.x + Math.sin(playerHeading) * CAMERA.lookAhead,
+      playerPos.y + 0.8,
+      playerPos.z + Math.cos(playerHeading) * CAMERA.lookAhead
+    );
+  }
 
   // Smooth lerp to target
-  const lerpFactor = 1 - Math.exp(-CAMERA.lerpSpeed * dt);
   currentPos.lerp(targetPos, lerpFactor);
   camera.position.copy(currentPos);
 
-  // Look at point ahead of player
-  const lookTarget = new THREE.Vector3(
-    playerPos.x + Math.sin(playerHeading) * CAMERA.lookAhead,
-    playerPos.y + 0.8,
-    playerPos.z + Math.cos(playerHeading) * CAMERA.lookAhead
-  );
   currentLookAt.lerp(lookTarget, lerpFactor);
   camera.lookAt(currentLookAt);
+}
+
+export function getCamera() {
+  return camera;
 }
 
 export function onResize() {

@@ -60,6 +60,11 @@ export const CAMERA = {
   fov: 65,
   near: 0.1,
   far: 200,
+  // Side camera
+  sideRight: 2.0,
+  sideFwd: 0.3,
+  sideHeight: 1.4,
+  sideLookHeight: 1.2,
 };
 
 // Tricks

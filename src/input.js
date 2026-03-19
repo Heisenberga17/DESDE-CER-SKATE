@@ -44,6 +44,9 @@ let prevRightY = 0;
 let prevRightX = 0;
 let flickCooldown = 0;
 
+// Camera toggle (Share button / C key) edge detection
+let prevCameraBtn = false;
+
 // Flick results (active for one frame)
 let flickOllie = false;
 let flickKickflip = false;
@@ -163,4 +166,13 @@ export function getInput() {
     // Analog values
     steerAmount: stickX,
   };
+}
+
+// Camera toggle — returns true once per press (edge detection)
+export function pollCameraToggle() {
+  const gp = getGamepad();
+  const pressed = btn(gp, PS5.SHARE) || isKeyDown('KeyC');
+  const toggled = pressed && !prevCameraBtn;
+  prevCameraBtn = pressed;
+  return toggled;
 }

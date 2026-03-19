@@ -50,7 +50,7 @@ const _playerMax = new THREE.Vector3();
 const _obsCenter = new THREE.Vector3();
 const _pushDir = new THREE.Vector3();
 
-export async function createPlayer(scene) {
+export async function createPlayer(scene, modelPath, texturePath) {
   playerGroup = new THREE.Group();
   playerGroup.position.copy(SPAWN);
   scene.add(playerGroup);
@@ -65,22 +65,17 @@ export async function createPlayer(scene) {
   skateboard = await createSkateboard();
   boardGroup.add(skateboard.group);
 
-  // Load REMBOT humanoid
-  // Use a loading manager to suppress texture errors (model has no textures we need)
-  const manager = new THREE.LoadingManager();
-  manager.onError = (url) => {
-    console.warn('FBX resource not found (expected):', url);
-  };
-  const loader = new FBXLoader(manager);
+  // Load character model
+  const loader = new FBXLoader();
+  const fbxPath = modelPath || '/REMBOT_humanoid_v2.fbx';
 
-  // Load with explicit XHR to catch all errors
   let fbx = null;
   try {
     fbx = await new Promise((resolve, reject) => {
       loader.load(
-        '/REMBOT_humanoid_v2.fbx',
+        fbxPath,
         (object) => resolve(object),
-        (progress) => console.warn('FBX loading:', Math.round((progress.loaded / (progress.total || 1)) * 100) + '%'),
+        undefined,
         (error) => reject(error)
       );
     });
@@ -89,9 +84,8 @@ export async function createPlayer(scene) {
   }
 
   if (fbx) {
-    console.warn('REMBOT FBX loaded OK!');
+    console.warn('FBX loaded OK:', fbxPath);
 
-    // FBXLoader already handles Z-up → Y-up, don't double-rotate
     // Scale to fit: target ~1.5m tall standing on board
     fbx.updateMatrixWorld(true);
     const rawBox = new THREE.Box3().setFromObject(fbx);
@@ -116,19 +110,29 @@ export async function createPlayer(scene) {
     const deckTop = BOARD.boardY + BOARD.deckHeight;
     fbx.position.y += deckTop - box2.min.y + 0.06;
 
+    // Load texture and apply to all meshes
+    let texture = null;
+    if (texturePath) {
+      try {
+        const texLoader = new THREE.TextureLoader();
+        texture = await texLoader.loadAsync(texturePath);
+        texture.colorSpace = THREE.SRGBColorSpace;
+      } catch (e) {
+        console.warn('Texture load failed:', texturePath, e);
+      }
+    }
+
     fbx.traverse((child) => {
       if (child.isMesh) {
         child.material = new THREE.MeshStandardMaterial({
-          color: 0xaaaabb,
-          metalness: 0.6,
-          roughness: 0.25,
-          emissive: 0x222233,
-          emissiveIntensity: 0.15,
+          map: texture,
+          roughness: 0.8,
+          metalness: 0.1,
         });
+        child.material.needsUpdate = true;
         child.castShadow = true;
         child.receiveShadow = true;
         modelMesh = child;
-        console.warn('REMBOT mesh:', child.name, child.geometry?.attributes?.position?.count, 'verts');
       }
     });
 
