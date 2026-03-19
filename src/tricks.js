@@ -16,6 +16,7 @@ export function createTrickState() {
     duration: 0,
     startRotX: 0,
     startRotY: 0,
+    startRotZ: 0,
   };
 }
 
@@ -25,6 +26,7 @@ export function startTrick(trickState, type, boardGroup) {
   trickState.timer = 0;
   trickState.startRotX = boardGroup.rotation.x;
   trickState.startRotY = boardGroup.rotation.y;
+  trickState.startRotZ = boardGroup.rotation.z;
 
   switch (type) {
     case TrickType.KICKFLIP:
@@ -45,12 +47,12 @@ export function updateTrick(trickState, boardGroup, dt) {
 
   switch (trickState.active) {
     case TrickType.KICKFLIP:
-      // 360 degree flip on local X axis
-      boardGroup.rotation.x = trickState.startRotX + progress * Math.PI * 2;
+      // 360° sideways flip on Z axis (like a real kickflip)
+      boardGroup.rotation.z = trickState.startRotZ + progress * Math.PI * 2;
       break;
     case TrickType.HEELFLIP:
-      // -360 degree flip on local X axis
-      boardGroup.rotation.x = trickState.startRotX - progress * Math.PI * 2;
+      // -360° sideways flip on Z axis (opposite direction)
+      boardGroup.rotation.z = trickState.startRotZ - progress * Math.PI * 2;
       break;
     case TrickType.SHUVIT:
       // 360 degree spin on Y axis
@@ -62,6 +64,7 @@ export function updateTrick(trickState, boardGroup, dt) {
   if (progress >= 1) {
     boardGroup.rotation.x = trickState.startRotX;
     boardGroup.rotation.y = trickState.startRotY;
+    boardGroup.rotation.z = trickState.startRotZ;
     trickState.active = TrickType.NONE;
     trickState.timer = 0;
   }
@@ -71,6 +74,7 @@ export function cancelTrick(trickState, boardGroup) {
   if (trickState.active !== TrickType.NONE) {
     boardGroup.rotation.x = trickState.startRotX;
     boardGroup.rotation.y = trickState.startRotY;
+    boardGroup.rotation.z = trickState.startRotZ;
     trickState.active = TrickType.NONE;
     trickState.timer = 0;
   }
