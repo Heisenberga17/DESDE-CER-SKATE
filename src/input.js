@@ -142,11 +142,10 @@ export function pollCameraToggle() {
   return toggled;
 }
 
-// HUD toggle — backtick or PS5 touchpad (button 17)
+// HUD toggle — backtick or PS5 L1
 export function pollHudToggle() {
   const gp = getGamepad();
-  const touchpad = gp && gp.buttons[17] ? gp.buttons[17].pressed : false;
-  const pressed = touchpad || isKeyDown('Backquote');
+  const pressed = btn(gp, PS5.L1) || isKeyDown('Backquote');
   const toggled = pressed && !prevHudBtn;
   prevHudBtn = pressed;
   return toggled;

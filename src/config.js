@@ -2,8 +2,8 @@
 
 // Colors
 export const COLORS = {
-  ground: 0x1a6a2a,
-  gridLine: 0x2a8a3a,
+  ground: 0x00a020,
+  gridLine: 0x10b830,
   obstacle: 0x444466,
   obstacleDark: 0x333355,
   obstacleLight: 0x555577,
@@ -51,13 +51,13 @@ export const BOARD = {
 
 // Camera
 export const CAMERA = {
-  distance: 2.8,
+  distance: 2.1,
   height: 1.5,
-  lookAhead: 0.8,
-  lerpSpeed: 3.0,
+  lookAhead: 1,
+  lerpSpeed: 10,
   airHeightBonus: 1.5,
-  speedZoomOut: 0.04,
-  fov: 65,
+  speedZoomOut: 0,
+  fov: 68,
   near: 0.1,
   far: 200,
   // Side camera
