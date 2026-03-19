@@ -292,6 +292,137 @@ export function buildLevel(scene) {
   placeRamp(scene, -14, 4, 2, 0.5, 1.2, Math.PI, matRamp);
 
   // ==========================================
+  // WEST STREET PLAZA (x:-40 to -30, z:-10 to 10)
+  // ==========================================
+
+  // 2 long flat grind rails
+  placeRail(scene, -40, -2, -30, -2, 0.35);
+  placeRail(scene, -40, 2, -30, 2, 0.35);
+
+  // Low ledge line
+  placeBox(scene, -35, 0.2, 0, 8, 0.4, 0.8, matLedge);
+
+  // 2 kicker ramps facing each other
+  placeRamp(scene, -37, -6, 2.5, 0.6, 1.5, 0, matRamp);
+  placeRamp(scene, -37, -9, 2.5, 0.6, 1.5, Math.PI, matRamp);
+
+  // Stair set with handrail
+  for (let i = 0; i < 5; i++) {
+    placeBox(scene, -33, (i + 1) * 0.15 / 2, 6 - i * 0.4, 3, (i + 1) * 0.15, 0.4, matLedge);
+  }
+  placeRail(scene, -34.7, 6, -34.7, 4.0, 0.8);
+
+  // Extra kicker pair
+  placeRamp(scene, -32, 8, 2.5, 0.5, 1.2, Math.PI, matRampDark);
+  placeRamp(scene, -38, 8, 2.5, 0.5, 1.2, Math.PI, matRampDark);
+
+  // ==========================================
+  // FAR NORTH PARK (x:-15 to 15, z:25 to 45)
+  // ==========================================
+
+  // Large quarter pipe wall
+  placeRamp(scene, 0, 42, 10, 2.2, 3.0, 0, matRampDark);
+
+  // 3 grind rails varied heights
+  placeRail(scene, -10, 30, -3, 30, 0.35);
+  placeRail(scene, 2, 33, 10, 33, 0.45);
+  placeRail(scene, -5, 37, 5, 37, 0.5);
+
+  // Funbox with ramps + flat top
+  placeRamp(scene, 0, 26, 3, 0.6, 1.5, 0, matRamp);
+  placeRamp(scene, 0, 29.5, 3, 0.6, 1.5, Math.PI, matRamp);
+  placeBox(scene, 0, 0.55, 27.75, 3, 0.1, 1.5, matRamp);
+
+  // Pyramid with 4 ramp faces
+  placeRamp(scene, -10, 37, 3.5, 0.7, 1.5, 0, matRamp);
+  placeRamp(scene, -10, 41, 3.5, 0.7, 1.5, Math.PI, matRamp);
+  placeRamp(scene, -12, 39, 3.5, 0.7, 1.5, -Math.PI / 2, matRamp);
+  placeRamp(scene, -8, 39, 3.5, 0.7, 1.5, Math.PI / 2, matRamp);
+  placeBox(scene, -10, 0.65, 39, 2.5, 0.1, 2.5, matRamp);
+
+  // Manual pads
+  placeBox(scene, 10, 0.1, 28, 3, 0.2, 1.5, matLedge);
+  placeBox(scene, 10, 0.1, 31, 3, 0.2, 1.5, matLedge);
+  placeBox(scene, -12, 0.1, 30, 3, 0.2, 1.5, matLedge);
+
+  // ==========================================
+  // EAST MEGA BOWL (x:30 to 50, z:-15 to 5)
+  // ==========================================
+
+  // 4 quarter pipes facing inward
+  placeRamp(scene, 40, -2, 7, 2.0, 2.5, 0, matRampDark);       // south side
+  placeRamp(scene, 40, -12, 7, 2.0, 2.5, Math.PI, matRampDark); // north side
+  placeRamp(scene, 33, -7, 6, 2.0, 2.5, Math.PI / 2, matRampDark);  // west side
+  placeRamp(scene, 47, -7, 6, 2.0, 2.5, -Math.PI / 2, matRampDark); // east side
+
+  // Flat bottom
+  placeBox(scene, 40, 0.05, -7, 8, 0.1, 6, matRamp);
+
+  // Entry kicker ramps
+  placeRamp(scene, 32, 2, 3, 0.6, 1.5, Math.PI / 2, matRamp);
+  placeRamp(scene, 48, -15, 3, 0.6, 1.5, -Math.PI / 2, matRamp);
+
+  // ==========================================
+  // FAR SOUTH RAIL YARD (x:-20 to 20, z:-40 to -55)
+  // ==========================================
+
+  // 6 rails in various orientations
+  placeRail(scene, -15, -42, -5, -42, 0.35);   // long flat
+  placeRail(scene, 5, -42, 15, -42, 0.35);     // parallel
+  placeRail(scene, -10, -46, 0, -46, 0.4);     // center
+  placeRail(scene, 5, -46, 12, -49, 0.35);     // diagonal
+  placeRail(scene, -8, -50, 8, -50, 0.35);     // far south long
+  placeRail(scene, -15, -48, -15, -54, 0.45);  // vertical rail
+
+  // 2 bank ramps at the far edge
+  placeRamp(scene, -10, -53, 5, 1.2, 2.0, 0, matRamp);
+  placeRamp(scene, 10, -53, 5, 1.2, 2.0, 0, matRamp);
+
+  // Low gap ledges
+  placeBox(scene, -5, 0.15, -44, 4, 0.3, 1, matLedge);
+  placeBox(scene, 5, 0.15, -44, 4, 0.3, 1, matLedge);
+  placeBox(scene, 0, 0.15, -48, 3, 0.3, 0.8, matLedge);
+
+  // ==========================================
+  // NORTHEAST FLOW SECTION (x:25 to 45, z:15 to 35)
+  // ==========================================
+
+  // Chain of kickers and small ramps
+  placeRamp(scene, 28, 18, 2.5, 0.5, 1.2, 0, matRamp);
+  placeRamp(scene, 33, 20, 2.5, 0.5, 1.2, 0, matRamp);
+  placeRamp(scene, 38, 22, 2.5, 0.6, 1.4, 0, matRampDark);
+  placeRamp(scene, 28, 25, 2.5, 0.5, 1.2, Math.PI, matRamp);
+  placeRamp(scene, 33, 27, 2.5, 0.6, 1.4, Math.PI, matRampDark);
+
+  // 2 hip transfers (angled ramp pairs)
+  placeRamp(scene, 38, 28, 3, 0.6, 1.5, Math.PI * 0.75, matRamp);
+  placeRamp(scene, 40, 30, 3, 0.6, 1.5, -Math.PI * 0.25, matRamp);
+  placeRamp(scene, 42, 18, 3, 0.6, 1.5, Math.PI * 0.25, matRampDark);
+  placeRamp(scene, 44, 20, 3, 0.6, 1.5, -Math.PI * 0.75, matRampDark);
+
+  // Long spine rail
+  placeRail(scene, 26, 30, 40, 30, 0.4);
+
+  // Elevated rail
+  placeRail(scene, 30, 34, 42, 34, 0.6);
+
+  // ==========================================
+  // SOUTHWEST BANKS (x:-45 to -30, z:-25 to -15)
+  // ==========================================
+
+  // Bank-to-bank setup (4 wide bank ramps)
+  placeRamp(scene, -38, -18, 5, 1.0, 2.0, 0, matRamp);
+  placeRamp(scene, -38, -22, 5, 1.0, 2.0, Math.PI, matRamp);
+  placeRamp(scene, -44, -18, 5, 1.0, 2.0, 0, matRampDark);
+  placeRamp(scene, -44, -22, 5, 1.0, 2.0, Math.PI, matRampDark);
+
+  // Flat gap between banks
+  placeBox(scene, -41, 0.05, -20, 12, 0.1, 2, matRamp);
+
+  // Rail across the gap
+  placeRail(scene, -46, -20, -35, -20, 0.45);
+
+  // ==========================================
   // CLOUDS
   // ==========================================
   createClouds(scene);
@@ -301,14 +432,32 @@ export function buildLevel(scene) {
 
 function createClouds(scene) {
   const cloudData = [
+    // Spread all around the sky, not just behind the park
+    // South
     { x: -20, y: 22, z: -40, sx: 16, sz: 7 },
     { x: 15, y: 27, z: -50, sx: 20, sz: 9 },
     { x: -35, y: 25, z: -30, sx: 13, sz: 6 },
     { x: 30, y: 29, z: -45, sx: 18, sz: 8 },
-    { x: 5, y: 32, z: -55, sx: 22, sz: 10 },
-    { x: -25, y: 24, z: -60, sx: 14, sz: 7 },
-    { x: 40, y: 26, z: -35, sx: 12, sz: 5 },
-    { x: -10, y: 30, z: -65, sx: 18, sz: 9 },
+    { x: 5, y: 32, z: -60, sx: 22, sz: 10 },
+    // North
+    { x: -15, y: 24, z: 40, sx: 18, sz: 8 },
+    { x: 25, y: 28, z: 50, sx: 22, sz: 10 },
+    { x: 0, y: 20, z: 35, sx: 14, sz: 6 },
+    { x: -40, y: 30, z: 45, sx: 16, sz: 7 },
+    // East
+    { x: 50, y: 26, z: -10, sx: 20, sz: 9 },
+    { x: 55, y: 22, z: 15, sx: 15, sz: 7 },
+    { x: 45, y: 34, z: 30, sx: 28, sz: 12 },
+    // West
+    { x: -50, y: 24, z: 5, sx: 17, sz: 8 },
+    { x: -55, y: 30, z: -20, sx: 24, sz: 11 },
+    { x: -45, y: 20, z: 25, sx: 12, sz: 6 },
+    // Overhead / scattered
+    { x: 10, y: 35, z: 10, sx: 26, sz: 11 },
+    { x: -30, y: 33, z: -55, sx: 20, sz: 9 },
+    { x: 40, y: 19, z: -30, sx: 10, sz: 5 },
+    { x: -10, y: 28, z: -5, sx: 15, sz: 7 },
+    { x: 60, y: 25, z: -40, sx: 18, sz: 8 },
   ];
 
   for (const c of cloudData) {
@@ -323,7 +472,7 @@ function createClouds(scene) {
     const mat = new THREE.MeshBasicMaterial({
       color: 0x4a2060,
       transparent: true,
-      opacity: 0.06 + Math.random() * 0.08,
+      opacity: 0.08 + Math.random() * 0.10,
       depthWrite: false,
       side: THREE.DoubleSide,
     });
