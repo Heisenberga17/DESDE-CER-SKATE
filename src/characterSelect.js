@@ -179,7 +179,7 @@ export function showCharacterSelect() {
       <div id="cs-names"></div>
       <div id="cs-desc"></div>
       <button id="cs-start">START</button>
-      <div id="cs-hint">← → or A/D to browse · Enter to confirm</div>
+      <div id="cs-hint">← → or A/D to browse · Enter to confirm · 🎮 D-pad/Stick + ✕ to select</div>
     `;
     document.body.appendChild(overlay);
 
@@ -237,10 +237,49 @@ export function showCharacterSelect() {
     }
     window.addEventListener('keydown', onKey);
 
+    // --- Gamepad polling ---
+    let prevStickX = 0;
+    let prevDpadL = false;
+    let prevDpadR = false;
+    let prevCross = false;
+    const GP_DEADZONE = 0.5;
+
+    function pollGamepad() {
+      const gamepads = navigator.getGamepads();
+      let gp = null;
+      for (let i = 0; i < gamepads.length; i++) {
+        if (gamepads[i]) { gp = gamepads[i]; break; }
+      }
+      if (!gp) return;
+
+      // Left stick X axis
+      const stickX = Math.abs(gp.axes[0]) > GP_DEADZONE ? gp.axes[0] : 0;
+      if (stickX > GP_DEADZONE && prevStickX <= GP_DEADZONE) {
+        selectChar((selectedIndex + 1) % CHARACTERS.length);
+      } else if (stickX < -GP_DEADZONE && prevStickX >= -GP_DEADZONE) {
+        selectChar((selectedIndex - 1 + CHARACTERS.length) % CHARACTERS.length);
+      }
+      prevStickX = stickX;
+
+      // D-pad left/right
+      const dpadL = gp.buttons[14] && gp.buttons[14].pressed;
+      const dpadR = gp.buttons[15] && gp.buttons[15].pressed;
+      if (dpadR && !prevDpadR) selectChar((selectedIndex + 1) % CHARACTERS.length);
+      if (dpadL && !prevDpadL) selectChar((selectedIndex - 1 + CHARACTERS.length) % CHARACTERS.length);
+      prevDpadL = dpadL;
+      prevDpadR = dpadR;
+
+      // Cross (X) button to confirm
+      const cross = gp.buttons[0] && gp.buttons[0].pressed;
+      if (cross && !prevCross) confirm();
+      prevCross = cross;
+    }
+
     // Animate preview
     let animId;
     function animatePreview() {
       animId = requestAnimationFrame(animatePreview);
+      pollGamepad();
       if (currentPreview) {
         currentPreview.rotation.y += 0.01;
       }

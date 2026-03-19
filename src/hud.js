@@ -8,7 +8,8 @@ let gui;
 
 export function createHUD() {
   gui = new GUI({ title: 'Camera Debug' });
-  gui.domElement.style.display = 'none';
+  gui.domElement.style.zIndex = '999';
+  gui.hide();
 
   // --- General ---
   gui.add(CAMERA, 'fov', 30, 120, 1).name('FOV').onChange((v) => {
@@ -33,12 +34,13 @@ export function createHUD() {
   side.add(CAMERA, 'sideFwd', -2, 2, 0.1);
   side.add(CAMERA, 'sideHeight', 0.5, 3, 0.1);
   side.add(CAMERA, 'sideLookHeight', 0.5, 3, 0.1);
+}
 
-  // --- Toggle with backtick ---
-  window.addEventListener('keydown', (e) => {
-    if (e.code === 'Backquote') {
-      const visible = gui.domElement.style.display !== 'none';
-      gui.domElement.style.display = visible ? 'none' : '';
-    }
-  });
+export function toggleHUD() {
+  if (!gui) return;
+  if (gui._hidden) {
+    gui.show();
+  } else {
+    gui.hide();
+  }
 }

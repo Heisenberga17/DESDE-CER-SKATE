@@ -47,6 +47,9 @@ let flickCooldown = 0;
 // Camera toggle (Share button / C key) edge detection
 let prevCameraBtn = false;
 
+// HUD toggle (Backquote / Touchpad) edge detection
+let prevHudBtn = false;
+
 // Flick results (active for one frame)
 let flickOllie = false;
 let flickKickflip = false;
@@ -80,9 +83,17 @@ function isKeyDown(code) {
 }
 
 function getGamepad() {
-  if (gamepadIndex < 0) return null;
   const gamepads = navigator.getGamepads();
-  return gamepads[gamepadIndex] || null;
+  // If we have a stored index, use it
+  if (gamepadIndex >= 0 && gamepads[gamepadIndex]) return gamepads[gamepadIndex];
+  // Otherwise scan for any connected gamepad (handles pre-initInput connections)
+  for (let i = 0; i < gamepads.length; i++) {
+    if (gamepads[i]) {
+      gamepadIndex = i;
+      return gamepads[i];
+    }
+  }
+  return null;
 }
 
 function btn(gp, index) {
@@ -174,5 +185,15 @@ export function pollCameraToggle() {
   const pressed = btn(gp, PS5.SHARE) || isKeyDown('KeyC');
   const toggled = pressed && !prevCameraBtn;
   prevCameraBtn = pressed;
+  return toggled;
+}
+
+// HUD toggle — backtick or PS5 touchpad (button 17)
+export function pollHudToggle() {
+  const gp = getGamepad();
+  const touchpad = gp && gp.buttons[17] ? gp.buttons[17].pressed : false;
+  const pressed = touchpad || isKeyDown('Backquote');
+  const toggled = pressed && !prevHudBtn;
+  prevHudBtn = pressed;
   return toggled;
 }

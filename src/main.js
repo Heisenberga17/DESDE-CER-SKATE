@@ -3,10 +3,10 @@
 import * as THREE from 'three';
 import { EffectComposer, RenderPass, BloomEffect, EffectPass, SMAAEffect } from 'postprocessing';
 import { COLORS, LIGHTING, POST, CAMERA as CAM_CONFIG } from './config.js';
-import { initInput, pollCameraToggle } from './input.js';
+import { initInput, pollCameraToggle, pollHudToggle } from './input.js';
 // import { initAudio } from './audio.js';
 import { createCamera, updateCamera, onResize, toggleCameraMode, getCamera } from './camera.js';
-import { createHUD } from './hud.js';
+import { createHUD, toggleHUD } from './hud.js';
 import { buildLevel } from './level.js';
 import { createPlayer, updatePlayer, getPlayerState } from './player.js';
 import { showCharacterSelect } from './characterSelect.js';
@@ -39,9 +39,6 @@ async function init(character) {
   // === Camera ===
   camera = createCamera();
 
-  // === Debug HUD ===
-  createHUD();
-
   // === Lighting ===
   setupLighting();
 
@@ -57,6 +54,9 @@ async function init(character) {
   // === Input & Audio ===
   initInput();
   // initAudio();
+
+  // === Debug HUD ===
+  createHUD();
 
   // === Events ===
   window.addEventListener('resize', handleResize);
@@ -193,6 +193,9 @@ function animate(timestamp) {
 
   // Camera toggle (C key / PS5 Share)
   if (pollCameraToggle()) toggleCameraMode();
+
+  // HUD toggle (backtick / PS5 touchpad)
+  if (pollHudToggle()) toggleHUD();
 
   // Update camera
   const state = getPlayerState();
