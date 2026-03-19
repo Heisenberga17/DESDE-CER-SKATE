@@ -46,7 +46,7 @@ async function init(character) {
   buildLevel(scene);
 
   // === Player ===
-  await createPlayer(scene, character.modelPath, character.texturePath);
+  await createPlayer(scene, character.modelPath, character.texturePath, character.yOffset || 0);
 
   // === Post-Processing ===
   setupPostProcessing();

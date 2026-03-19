@@ -53,7 +53,7 @@ const _playerMax = new THREE.Vector3();
 const _obsCenter = new THREE.Vector3();
 const _pushDir = new THREE.Vector3();
 
-export async function createPlayer(scene, modelPath, texturePath) {
+export async function createPlayer(scene, modelPath, texturePath, yOffset = 0) {
   playerGroup = new THREE.Group();
   playerGroup.position.copy(SPAWN);
   scene.add(playerGroup);
@@ -70,7 +70,7 @@ export async function createPlayer(scene, modelPath, texturePath) {
 
   // Load character model
   const loader = new FBXLoader();
-  const fbxPath = modelPath || '/REMBOT_humanoid_v2.fbx';
+  const fbxPath = modelPath;
 
   let fbx = null;
   try {
@@ -111,7 +111,7 @@ export async function createPlayer(scene, modelPath, texturePath) {
 
     // Feet on deck
     const deckTop = BOARD.boardY + BOARD.deckHeight;
-    fbx.position.y += deckTop - box2.min.y + 0.06;
+    fbx.position.y += deckTop - box2.min.y + 0.06 + yOffset;
 
     // Load texture and apply to all meshes
     let texture = null;
