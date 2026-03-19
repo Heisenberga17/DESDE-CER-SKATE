@@ -12,7 +12,9 @@ export function showCharacterSelect() {
   return new Promise((resolve) => {
     let selectedIndex = 0;
     const models = new Array(CHARACTERS.length).fill(null);
+    const mixers = new Array(CHARACTERS.length).fill(null);
     let currentPreview = null;
+    let activeMixer = null;
 
     // --- Three.js preview scene ---
     const previewRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -94,6 +96,15 @@ export function showCharacterSelect() {
               }
             });
 
+            // Play embedded animation — strip root motion so character stays on board
+            if (fbx.animations.length > 0) {
+              const clip = fbx.animations[0];
+              clip.tracks = clip.tracks.filter(t => t.name !== 'mixamorigHips.position');
+              const mx = new THREE.AnimationMixer(fbx);
+              mx.clipAction(clip).play();
+              mixers[index] = mx;
+            }
+
             models[index] = fbx;
             res(fbx);
           },
@@ -112,7 +123,10 @@ export function showCharacterSelect() {
       if (currentPreview) previewScene.remove(currentPreview);
       if (models[index]) {
         currentPreview = models[index];
+        activeMixer = mixers[index];
         previewScene.add(currentPreview);
+      } else {
+        activeMixer = null;
       }
     }
 
@@ -277,9 +291,14 @@ export function showCharacterSelect() {
 
     // Animate preview
     let animId;
+    let prevTime = performance.now();
     function animatePreview() {
       animId = requestAnimationFrame(animatePreview);
+      const now = performance.now();
+      const dt = (now - prevTime) / 1000;
+      prevTime = now;
       pollGamepad();
+      if (activeMixer) activeMixer.update(dt);
       if (currentPreview) {
         currentPreview.rotation.y += 0.01;
       }

@@ -22,6 +22,9 @@ let boardGroup;     // Just the board (for trick rotations)
 let modelMesh;
 let skateboard;
 
+let mixer = null;
+let skateAction = null;
+
 // Physics
 let heading = 0;
 let speed = 0;
@@ -99,8 +102,8 @@ export async function createPlayer(scene, modelPath, texturePath) {
     const box = new THREE.Box3().setFromObject(fbx);
     console.warn('FBX scaled height:', (box.max.y - box.min.y).toFixed(3));
 
-    // Skater stance: sideways on the board
-    fbx.rotation.y = Math.PI / 2;
+    // Face forward (away from camera)
+    fbx.rotation.y = 0;
 
     // Re-measure after rotation
     fbx.updateMatrixWorld(true);
@@ -137,6 +140,16 @@ export async function createPlayer(scene, modelPath, texturePath) {
     });
 
     skaterGroup.add(fbx);
+
+    // Play embedded animation — strip root motion so character stays on board
+    if (fbx.animations.length > 0) {
+      const clip = fbx.animations[0];
+      // Remove the hips position track (root motion) to keep character on the board
+      clip.tracks = clip.tracks.filter(t => t.name !== 'mixamorigHips.position');
+      mixer = new THREE.AnimationMixer(fbx);
+      skateAction = mixer.clipAction(clip);
+      skateAction.play();
+    }
   } else {
     console.warn('Using fallback capsule for player');
     const geo = new THREE.CapsuleGeometry(0.25, 1.0, 8, 16);
@@ -165,6 +178,7 @@ export function getPlayerState() {
 
 export function updatePlayer(dt) {
   if (!playerGroup) return;
+  if (mixer) mixer.update(dt);
   const input = getInput();
 
   // === Reset ===
