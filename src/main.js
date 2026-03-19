@@ -148,7 +148,7 @@ function setupLighting() {
   scene.add(rimLight);
 
   // Subtle hemisphere light for fill
-  const hemiLight = new THREE.HemisphereLight(0x334466, 0x111122, 0.2);
+  const hemiLight = new THREE.HemisphereLight(0x556688, 0x222233, 0.5);
   scene.add(hemiLight);
 }
 

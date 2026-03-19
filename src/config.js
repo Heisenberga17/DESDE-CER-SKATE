@@ -96,8 +96,8 @@ export const AUDIO = {
 
 // Lighting
 export const LIGHTING = {
-  ambientIntensity: 0.5,
-  ambientColor: 0x4a5a7a,
+  ambientIntensity: 0.8,
+  ambientColor: 0x6a7a9a,
   dirIntensity: 1.8,
   dirColor: 0xffeedd,
   dirPosition: [15, 20, 10],
