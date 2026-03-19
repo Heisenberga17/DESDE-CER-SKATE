@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { EffectComposer, RenderPass, BloomEffect, EffectPass, SMAAEffect } from 'postprocessing';
 import { COLORS, LIGHTING, POST, CAMERA as CAM_CONFIG } from './config.js';
-import { initInput, pollCameraToggle, pollHudToggle } from './input.js';
+import { initInput, pollCameraToggle, pollHudToggle, getCameraInput } from './input.js';
 // import { initAudio } from './audio.js';
 import { createCamera, updateCamera, onResize, toggleCameraMode, getCamera } from './camera.js';
 import { createHUD, toggleHUD } from './hud.js';
@@ -199,7 +199,8 @@ function animate(timestamp) {
 
   // Update camera
   const state = getPlayerState();
-  updateCamera(state.position, state.heading, state.speed, state.isAirborne, dt);
+  const camInput = getCameraInput();
+  updateCamera(state.position, state.heading, state.speed, state.isAirborne, dt, camInput);
 
   // Render
   composer.render();

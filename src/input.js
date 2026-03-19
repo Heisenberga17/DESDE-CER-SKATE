@@ -1,15 +1,13 @@
-// === Input Handler (Keyboard + PS5 DualSense — Skate-style controls) ===
+// === Input Handler (Keyboard + PS5 DualSense) ===
 //
-// PS5 Mapping (Skate style):
-//   Left Stick    — Steer
-//   X (Cross)     — Push / Accelerate
-//   L2            — Brake
-//   Right Stick   — Flickit tricks:
-//       Flick up         → Ollie
-//       Flick up-left    → Kickflip
-//       Flick up-right   → Heelflip
-//       Flick left/right → Shuvit
-//   Triangle      — Grind (near rail)
+// PS5 Mapping:
+//   Left Stick    — Move / Steer
+//   Right Stick   — Camera orbit
+//   X (Cross)     — Ollie (jump)
+//   Square        — Kickflip
+//   Circle        — Heelflip
+//   Triangle      — Shuvit
+//   R1            — Grind (near rail)
 //   Options       — Reset
 //
 
@@ -37,24 +35,12 @@ const PS5 = {
 };
 
 const DEADZONE = 0.15;
-const FLICK_THRESHOLD = 0.7; // How far stick must travel to count as a flick
-
-// Right stick flick detection state
-let prevRightY = 0;
-let prevRightX = 0;
-let flickCooldown = 0;
 
 // Camera toggle (Share button / C key) edge detection
 let prevCameraBtn = false;
 
 // HUD toggle (Backquote / Touchpad) edge detection
 let prevHudBtn = false;
-
-// Flick results (active for one frame)
-let flickOllie = false;
-let flickKickflip = false;
-let flickHeelflip = false;
-let flickShuvit = false;
 
 export function initInput() {
   window.addEventListener('keydown', (e) => {
@@ -110,65 +96,24 @@ function axis(gp, index) {
   return Math.abs(v) > DEADZONE ? v : 0;
 }
 
-function detectFlicks(gp) {
-  flickOllie = false;
-  flickKickflip = false;
-  flickHeelflip = false;
-  flickShuvit = false;
-
-  if (!gp || flickCooldown > 0) {
-    flickCooldown = Math.max(0, flickCooldown - 1);
-    prevRightX = axis(gp, 2);
-    prevRightY = axis(gp, 3);
-    return;
-  }
-
-  const rx = axis(gp, 2); // Right stick X
-  const ry = axis(gp, 3); // Right stick Y (negative = up)
-
-  // Detect flick UP (stick was down/neutral, now up)
-  if (prevRightY >= -0.3 && ry < -FLICK_THRESHOLD) {
-    if (rx < -0.4) {
-      flickKickflip = true;  // Flick up-left
-    } else if (rx > 0.4) {
-      flickHeelflip = true;  // Flick up-right
-    } else {
-      flickOllie = true;     // Flick straight up
-    }
-    flickCooldown = 10; // ~10 frames cooldown
-  }
-
-  // Detect flick sideways (for shuvit)
-  if (Math.abs(prevRightX) < 0.3 && Math.abs(rx) > FLICK_THRESHOLD && Math.abs(ry) < 0.4) {
-    flickShuvit = true;
-    flickCooldown = 10;
-  }
-
-  prevRightX = rx;
-  prevRightY = ry;
-}
-
 export function getInput() {
   const gp = getGamepad();
-
-  // Detect right stick flicks
-  detectFlicks(gp);
 
   const stickX = axis(gp, 0); // Left stick X
   const stickY = axis(gp, 1); // Left stick Y (negative = up/forward)
 
   return {
-    // Movement — left stick to move
+    // Movement — left stick
     forward:   isKeyDown('KeyW')   || stickY < -DEADZONE,
     brake:     isKeyDown('KeyS')   || stickY > DEADZONE,
     left:      isKeyDown('KeyA')   || stickX < -DEADZONE,
     right:     isKeyDown('KeyD')   || stickX > DEADZONE,
 
-    // Tricks — right stick flicks (Skate style) + button fallbacks
-    jump:      isKeyDown('Space')  || flickOllie || flickKickflip || flickHeelflip || btn(gp, PS5.CROSS),
-    kickflip:  isKeyDown('KeyF')   || flickKickflip  || btn(gp, PS5.SQUARE),
-    heelflip:  isKeyDown('KeyG')   || flickHeelflip  || btn(gp, PS5.CIRCLE),
-    shuvit:    isKeyDown('KeyH')   || flickShuvit    || btn(gp, PS5.TRIANGLE),
+    // Tricks — buttons only
+    jump:      isKeyDown('Space')  || btn(gp, PS5.CROSS),
+    kickflip:  isKeyDown('KeyF')   || btn(gp, PS5.SQUARE),
+    heelflip:  isKeyDown('KeyG')   || btn(gp, PS5.CIRCLE),
+    shuvit:    isKeyDown('KeyH')   || btn(gp, PS5.TRIANGLE),
 
     // Actions
     grind:     isKeyDown('KeyE')   || btn(gp, PS5.R1),
@@ -176,6 +121,15 @@ export function getInput() {
 
     // Analog values
     steerAmount: stickX,
+  };
+}
+
+// Right stick values for camera control
+export function getCameraInput() {
+  const gp = getGamepad();
+  return {
+    x: axis(gp, 2), // Right stick X (horizontal orbit)
+    y: axis(gp, 3), // Right stick Y (vertical pitch)
   };
 }
 
