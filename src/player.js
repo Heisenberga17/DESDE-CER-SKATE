@@ -190,7 +190,8 @@ export function updatePlayer(dt) {
     skaterModel.updateMatrixWorld(true);
     const animBox = new THREE.Box3().setFromObject(skaterModel, true);
     const deckTop = BOARD.boardY + BOARD.deckHeight;
-    skaterModel.position.y += deckTop - animBox.min.y;
+    const worldDeckTop = deckTop + playerGroup.position.y + skaterGroup.position.y;
+    skaterModel.position.y += worldDeckTop - animBox.min.y;
   }
 
   const input = getInput();
