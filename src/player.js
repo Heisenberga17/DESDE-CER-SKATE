@@ -111,7 +111,7 @@ export async function createPlayer(scene, modelPath, texturePath, yOffset = 0) {
 
     // Feet on deck
     const deckTop = BOARD.boardY + BOARD.deckHeight;
-    fbx.position.y += deckTop - box2.min.y + 0.06 + yOffset;
+    fbx.position.y += deckTop - box2.min.y + yOffset;
 
     // Load texture and apply to all meshes
     let texture = null;
@@ -145,7 +145,7 @@ export async function createPlayer(scene, modelPath, texturePath, yOffset = 0) {
     if (fbx.animations.length > 0) {
       const clip = fbx.animations[0];
       // Remove the hips position track (root motion) to keep character on the board
-      clip.tracks = clip.tracks.filter(t => t.name !== 'mixamorigHips.position');
+      clip.tracks = clip.tracks.filter(t => !t.name.endsWith('.position'));
       mixer = new THREE.AnimationMixer(fbx);
       skateAction = mixer.clipAction(clip);
       skateAction.play();

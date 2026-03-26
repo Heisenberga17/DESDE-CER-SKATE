@@ -99,7 +99,7 @@ export function showCharacterSelect() {
             // Play embedded animation — strip root motion so character stays on board
             if (fbx.animations.length > 0) {
               const clip = fbx.animations[0];
-              clip.tracks = clip.tracks.filter(t => t.name !== 'mixamorigHips.position');
+              clip.tracks = clip.tracks.filter(t => !t.name.endsWith('.position'));
               const mx = new THREE.AnimationMixer(fbx);
               mx.clipAction(clip).play();
               mixers[index] = mx;
