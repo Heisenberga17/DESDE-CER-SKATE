@@ -21,6 +21,8 @@ let skaterGroup;    // Contains model + board (tilts/leans)
 let boardGroup;     // Just the board (for trick rotations)
 let modelMesh;
 let skateboard;
+let skaterModel = null;
+let initialFeetY = 0;
 
 let mixer = null;
 let skateAction = null;
@@ -112,6 +114,7 @@ export async function createPlayer(scene, modelPath, texturePath, yOffset = 0) {
     // Feet on deck
     const deckTop = BOARD.boardY + BOARD.deckHeight;
     fbx.position.y += deckTop - box2.min.y + yOffset;
+    initialFeetY = fbx.position.y;
 
     // Load texture and apply to all meshes
     let texture = null;
@@ -140,6 +143,7 @@ export async function createPlayer(scene, modelPath, texturePath, yOffset = 0) {
     });
 
     skaterGroup.add(fbx);
+    skaterModel = fbx;
 
     // Play embedded animation — strip root motion so character stays on board
     if (fbx.animations.length > 0) {
@@ -179,6 +183,16 @@ export function getPlayerState() {
 export function updatePlayer(dt) {
   if (!playerGroup) return;
   if (mixer) mixer.update(dt);
+
+  // Dynamic foot correction: keep feet on deck despite animation crouch
+  if (skaterModel) {
+    skaterModel.position.y = initialFeetY;
+    skaterModel.updateMatrixWorld(true);
+    const animBox = new THREE.Box3().setFromObject(skaterModel, true);
+    const deckTop = BOARD.boardY + BOARD.deckHeight;
+    skaterModel.position.y += deckTop - animBox.min.y;
+  }
+
   const input = getInput();
 
   // === Reset ===
